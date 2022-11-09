@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "user",
+    "password": "user",
+    "database": "boiler-plate_express",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "operatorAliases": false
+  }
+}
