@@ -30,9 +30,9 @@ class Member extends Model {
       sequelize,
       timestamps: false,
       underscored: false,
-      modelName: 'User',
-      tableName: 'users',
-      paranoid: false,
+      modelName: 'Member',
+      tableName: 'member',
+      paranoid: true,
       charset: 'utf8',
       collate: 'utf8_general_ci'
     })
