@@ -1,44 +1,43 @@
 const express = require('express')
 require('dotenv').config()
-const {sequelize} = require('./models')
-
+const cors = require('cors')
+const { sequelize } = require('./api/models')
+const v1Router = require('./api/v1/routes')
 const app = express()
 
+
 app.set('port', process.env.PROT || 3002);
+
+sequelize.sync({ force: false })
+  .then(() => {
+      console.log(`데이터베이스 연결 성공`);
+  })
+  .catch((err) => {
+    console.log(`err: ${err}`);
+  })
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-const users = [
-  { id: 1, name: 'yuri' },
-  { id: 2, name: 'dongho' },
-]
-app.get("/", (req, res) => {
-  res.send("율2ㅎㅇ")
-})
+app.use(cors({
+  origin: 'http://localhost:8081',
+  credentials: true
+}))
 
-app.get('/api/users', (req, res) => {
-  res.json({ok: true, users: users})
-})
+app.use('/api/v1', v1Router)
 
-//query
-app.get('/api/users/user', (req, res) => {
-  const user_id = req.query.user_id
-  const user = users.filter(data => data.id==user_id)
-  res.json({ok:false, user: user})
-})
-//body
-app.get(`/api/users/userBody`, (req, res) => {
-  const user_id = req.body.user_id
-  const user = users.filter(data => data.id == user_id)
-  res.json({ok:false, user:user})
-  
-})
-//param
-app.get(`/api/users/:user_id`, (req, res) => {
-  const user_id = req.params.user_id
-  const user = users.filter(data => data.id==user_id)
-  res.json({ok:true, user: user})
-})
 
-app.listen(app.get('port'), () => console.log('율2ㅎㅎㅎㅎㅎㅎㅎ'))
+
+// app.use((req, res, next) => {
+//   const error = new ErrorEvent(`${req.method} ${req.url} 라우터가 없습니다.`)
+//   error.status = 404;
+//   next(error)
+// })
+
+// app.use((err, req, res, next) => {
+//   res.locals.message = err.message;
+//   res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
+//   res.status(err.status || 500)
+// })
+
+app.listen(app.get('port'), () => console.log(`Listening on ${app.get('port')} port ! ~`))
