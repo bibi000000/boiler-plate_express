@@ -1,38 +1,36 @@
-const { promisify } = require('util')
-const jwtUtil = require('jsonwebtoken')
-require('dotenv').config()
+const {promisify} = require('util')
+const jwt = require('jsonwebtoken')
 const redisClient = require('./redis.util')
+require('dotenv').config()
 const secret = process.env.JWT_SECRET
 
 module.exports = {
   sign: (email) => {
-    const payload = {
-      email: email
-    }
-    return jwtUtil.sign(payload, secret, {
+    const payload = { email }
+    return jwt.sign(payload, secret, {
+      algorithm: 'RS256',
       expiresIn: '1h',
-      algorithm: 'HS256',
     })
   },
   verify: (token) => {
-    let decoded = null;
+    let decoded = null
     try {
-      decoded = jwtUtil.verify(token, secret)
+      decoded = jwt.verify(token, secret)
       return {
         type: true,
-        email: decoded.email,
+        email: decoded.email
       }
     } catch (err) {
       return {
         type: false,
-        message: err.message,
+        message: err.message
       }
     }
   },
   refresh: () => {
-    return jwtUtil.sign({}, secret, {
-      expiresIn: '14d',
-      algorithm: 'HS256',
+    return jwt.sign({}, secret, {
+      algorithm: 'RS256',
+      expiresIn: '14d'
     })
   },
   refreshVerify: async (token, email) => {
@@ -41,7 +39,7 @@ module.exports = {
       const data = await getAsync(email)
       if (token === data) {
         try {
-          jwtUtil.verify(token, secret)
+          jwt.verify(token, secret)
           return true
         } catch (err) {
           return false
