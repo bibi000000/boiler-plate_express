@@ -1,4 +1,6 @@
 const { Sequelize, Model } = require('sequelize')
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 
 class Member extends Model {
   static init(sequelize) {
@@ -36,6 +38,12 @@ class Member extends Model {
       charset: 'utf8',
       collate: 'utf8_general_ci'
     })
+  }
+
+  comparePassword(plainPassword) {
+    const salt = bcrypt.genSaltSync(saltRounds)
+    const hash = bcrypt.hashSync(plainPassword, salt)
+    return bcrypt.compareSync(plainPassword, hash)
   }
 
   static associate(db) {

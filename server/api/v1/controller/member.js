@@ -5,7 +5,44 @@ const Member = require('../../models/member')
 
 const memberLogin = async (req, res, next) => {
   try {
-
+    const member = await Member.findOne({
+      where: {
+        email: req.body.email,
+      }
+    })
+    const isMatch = member.comparePassword(req.body.password)
+    if (isMatch) {
+      const memberInfo = {
+        memberId: member.id,
+        email: member.email,
+        nickname: member.nickname,
+        role: member.role,
+        created_at: member.created_at
+      }
+      const accessToken = jwt.sign(req.body.email)
+      const refreshToken = jwt.refresh()
+      redisClient.set(req.body.email, refreshToken)
+      res.setHeader('Content-Type', 'application/json; charset=utf-8')
+      res.setHeader('Authorization', 'Bearer '+accessToken)
+      res.setHeader('Refresh', 'Bearer '+refreshToken)
+      res
+        .status(200)
+        .json({
+          success: true,
+          memberInfo,
+          token: {
+            accessToken,
+            refreshToken
+          }
+        })
+    } else {
+      res
+        .status(401)
+        .json({
+          success: false,
+          message: '비밀번호가 틀렸습니다.'
+        })
+    }
   } catch (err) {
     console.error(`controller member.js memberLogin err: ${err}`)
     next(err)
@@ -14,7 +51,9 @@ const memberLogin = async (req, res, next) => {
 
 const memberLogout = async (req, res, next) => {
   try {
-
+    const member = await Member.update({
+      
+    })
   } catch (err) {
     console.error(`controller member.js memberLogout err:`, err);
     next(err)
