@@ -1,3 +1,6 @@
+const jwt = require('../../utils/jwt.util')
+const redisClient = require('../../utils/redis.util')
+
 const Member = require('../../models/member')
 
 const memberLogin = async (req, res, next) => {

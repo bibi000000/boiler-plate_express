@@ -1,7 +1,7 @@
-const redisUtil = require('redis')
+const redis = require('redis')
 require('dotenv').config()
-const redisClient = redisUtil.createClient({
-  port: process.env.REDIS_PIRT
+const redisClient = redis.createClient({
+  port: process.env.REDIS_PORT
 })
 redisClient.on('connect', () => {
   console.log('Connected to Redis ~ !')
