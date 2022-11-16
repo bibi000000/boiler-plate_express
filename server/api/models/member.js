@@ -29,6 +29,15 @@ class Member extends Model {
         defaultValue: Sequelize.NOW,
       },
     }, {
+      hooks: {
+        beforeUpdate: (member) => {
+          if (member.password) {
+            const salt = bcrypt.genSaltSync(saltRounds)
+            const hash = bcrypt.hashSync(member.password, salt)
+            member.password = hash
+          }
+        }
+      },
       sequelize,
       timestamps: false,
       underscored: false,
@@ -43,7 +52,7 @@ class Member extends Model {
   comparePassword(plainPassword) {
     const salt = bcrypt.genSaltSync(saltRounds)
     const hash = bcrypt.hashSync(plainPassword, salt)
-    return bcrypt.compareSync(plainPassword, hash)
+    return bcrypt.compareSync(this.password, hash)
   }
 
   static associate(db) {
