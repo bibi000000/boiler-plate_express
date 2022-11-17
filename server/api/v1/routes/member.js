@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { memberRegist, memberDetail, memberLogin, memberWithdrawl, memberModify, memberLogout } = require('../controller/member')
-const { auth } = require('../middleware/auth')
+const auth = require('../middleware/auth')
 
 router
   .post(`/login`, memberLogin)
@@ -11,7 +11,7 @@ router
 router
   .post(`/`, memberRegist)
 router
-  .get(`/:memberId`, auth, memberDetail)
+  .get(`/:memberId`, memberDetail)
 router
   .put(`/`, memberModify)
 router
